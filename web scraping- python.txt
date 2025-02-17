@@ -1,0 +1,51 @@
+#Importing beautifulsoup to extract data
+----------------------------------------
+from bs4 import BeautifulSoup
+import requests 
+
+---------------------------
+#Copying a website url 
+---------------------------
+url = 'https://en.wikipedia.org/wiki/List_of_largest_companies_in_the_United_States_by_revenue'
+page = requests.get(url)
+
+---------------------------
+#Parsing the page content
+---------------------------
+soup = BeautifulSoup(page.text, 'html')
+
+----------------------------------------
+# Finding the target table by using soup
+----------------------------------------
+table = soup.find_all('table')[0];
+soup.find('table', class_ = 'wikitable sortable'); 
+
+-----------------------------------------
+#Creating a variable to store 'th' values
+-----------------------------------------
+world_titles=table.find_all('th'); 
+world_table_titles = [title.text.strip() for title in world_titles];
+world_table_titles;
+
+----------------------------------------------------------------------
+#Extracting Table Headers and Rows for creating DataFrame using pandas
+----------------------------------------------------------------------
+import pandas as pd
+df = pd.DataFrame(columns = world_table_titles)
+column_data = table.find_all('tr')
+
+---------------------------------------
+#Looping through rows and extract data
+---------------------------------------
+for row in column_data[1:]:
+    row_data = row.find_all('td')
+    individual_row_data = [data.text.strip() for data in row_data]
+    
+    length = len(df)
+    df.loc[length] = individual_row_data
+
+df
+--------------------------------------------
+#Saving the extracted data into csv format
+--------------------------------------------
+"""df.to_csv(r'C:\Users\suriya\Documents\Python Web Scraping\Folder for Output\Companies.csv', index = False)"""
